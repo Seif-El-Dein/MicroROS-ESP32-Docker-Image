@@ -1,0 +1,47 @@
+1. Create an ESP-IDF Project clone the microROS Component in "components" directory then clone:
+git clone -b humble https://github.com/micro-ROS/micro_ros_espidf_component.git components/micro_ros_espidf_component
+
+2. Make sure that the CMakeLists.txt of the project root has the following:
+##################################################################################
+cmake_minimum_required(VERSION 3.5)
+
+# Add micro-ROS component
+set(EXTRA_COMPONENT_DIRS components/micro_ros_espidf_component)
+
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+
+project(your_project_name)
+##################################################################################
+
+3. Create the Dockerfile
+
+4. Use the following commands in the project directory:
+	# Build the Docker Image.
+	docker build -t microros-esp32-environment .
+	
+	# Run the Docker Image.
+	docker run -it --rm -v ${PWD}:/project -w /project microros-esp32-environment bash
+
+	# make sure that Colcon is installed:
+	python3 -m pip install -U pip setuptools
+	python3 -m pip install -U colcon-common-extensions
+
+	# Then Run:
+	/opt/esp-idf/install.sh
+
+	pip install em==0.1.0
+
+	# Start building your project:
+	idf.py build
+	idf.py partition table
+
+5. When the Build is done Successfully:
+
+	docker cp <Docker ID>:/project/build C:\Users\SeifE\Desktop\esp_build
+
+6. Extract the 3 bin files for the Flashing process of the ESP32:
+	Bootloader.bin
+	partition table.bin
+	project.bin
+
+7. Use esptool.py to manually flash the bin files on the ESP32 via Windows OS or flash it directly if the docker image is running on ubuntu OS
