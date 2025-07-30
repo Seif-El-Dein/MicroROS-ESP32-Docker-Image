@@ -1,4 +1,4 @@
-1. Create an ESP-IDF Project clone the microROS Component in "components" directory then clone:
+1. Create an ESP-IDF Project clone the microROS Component in project directory then clone:
 git clone -b humble https://github.com/micro-ROS/micro_ros_espidf_component.git components/micro_ros_espidf_component
 
 2. Make sure that the CMakeLists.txt of the project root has the following:
@@ -28,15 +28,18 @@ project(your_project_name)
 
 	# Then Run:
 	/opt/esp-idf/install.sh
-
+	. /opt/esp-idf/export.sh
+	
 	pip install em==0.1.0
+	pip uninstall em
+	pip install empy==3.3.4
 
 	# Start building your project:
 	idf.py build
 	idf.py partition table
 
 5. When the Build is done Successfully:
-
+	# RUN the Powershell in Administrator Mode only or the symlink will fail the data transfer.
 	docker cp <Docker ID>:/project/build C:\Users\SeifE\Desktop\esp_build
 
 6. Extract the 3 bin files for the Flashing process of the ESP32:
@@ -45,3 +48,13 @@ project(your_project_name)
 	project.bin
 
 7. Use esptool.py to manually flash the bin files on the ESP32 via Windows OS or flash it directly if the docker image is running on ubuntu OS
+esptool --chip esp32 --port COM8 --baud 460800 write_flash -z 0x1000 bootloader.bin
+esptool --chip esp32 --port COM8 --baud 460800 write_flash -z 0x8000 partition-table.bin
+esptool --chip esp32 --port COM8 --baud 460800 write_flash -z 0x10000 app-template.bin
+
+8. To push a docker image from local to docker-hub:
+	# you must make the docker image name the same as the repository using your username
+	docker tag microros-esp32-environment-test:latest seifeldein/microros-esp32-environment-test:latest
+	# then push the image to docker hub
+	docker push seifeldein/microros-esp32-environment-test:latest
+
